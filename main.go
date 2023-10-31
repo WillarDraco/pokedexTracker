@@ -10,8 +10,6 @@ import (
 	"github.com/jcelliott/lumber"
 )
 
-const version = "1.0.0"
-
 type (
 	Logger interface {
 		Fatal(string, ...interface{})
@@ -34,7 +32,7 @@ type Options struct {
 	Logger
 }
 
-func New(dir string, options *Options) (*Driver, error) {
+func Create(dir string, options *Options) (*Driver, error) {
 	dir = filepath.Clean(dir)
 	opts := Options{}
 	if options != nil {
@@ -56,17 +54,17 @@ func New(dir string, options *Options) (*Driver, error) {
 		return &driver, nil
 	}
 
-	opts.Logger.Debug("Creating the database at '%s' ...\n", dir)
+	//opts.Logger.Debug("Creating the database at '%s' ...\n", dir)
 	return &driver, os.MkdirAll(dir, 0755)
 }
 
 func (d *Driver) Write(collection string, resource string, v interface{}) error {
 	if collection == "" {
-		return fmt.Errorf("Missing collection - no place to save record!")
+		return fmt.Errorf("missing collection - no place to save record")
 	}
 
 	if resource == "" {
-		return fmt.Errorf("Missing resource - unable to save record (no name)!")
+		return fmt.Errorf("missing resource - unable to save record (no name)")
 	}
 
 	mutex := d.getOrCreateMutex(collection)
@@ -99,11 +97,11 @@ func (d *Driver) Write(collection string, resource string, v interface{}) error 
 func (d *Driver) Read(collection string, resource string, v interface{}) error {
 
 	if collection == "" {
-		return fmt.Errorf("Missing collection - unable to read!")
+		return fmt.Errorf("missing collection - unable to read")
 	}
 
 	if resource == "" {
-		return fmt.Errorf("Missing resource - unable to read!")
+		return fmt.Errorf("missing resource - unable to read")
 	}
 
 	record := filepath.Join(d.dir, collection, resource)
@@ -123,7 +121,7 @@ func (d *Driver) Read(collection string, resource string, v interface{}) error {
 func (d *Driver) ReadAll(collection string) ([]string, error) {
 
 	if collection == "" {
-		return nil, fmt.Errorf("Missing collection - unable to read!")
+		return nil, fmt.Errorf("missing collection - unable to read")
 	}
 
 	dir := filepath.Join(d.dir, collection)
@@ -155,7 +153,7 @@ func (d *Driver) Delete(collection string, resource string) error {
 
 	switch fi, err := stat(dir); {
 	case fi == nil, err != nil:
-		return fmt.Errorf("Unable to find file or directory named %v\n", path)
+		return fmt.Errorf("unable to find file or directory named %v", path)
 	case fi.Mode().IsDir():
 		return os.RemoveAll(dir)
 	case fi.Mode().IsRegular():
@@ -192,7 +190,7 @@ type mon struct {
 
 func main() {
 	dir := "./"
-	db, err := New(dir, nil)
+	db, err := Create(dir, nil)
 	if err != nil {
 		fmt.Println("Error ", err)
 	}
@@ -211,8 +209,8 @@ func main() {
 
 	for _, value := range pokemon {
 		db.Write("pokemon", value.name, mon{
-			ID:   value.id,
-			Name: value.name})
+			id:   value.id,
+			name: value.name})
 	}
 
 	records, err := db.ReadAll("pokemon")
@@ -221,15 +219,14 @@ func main() {
 	}
 	fmt.Println(records)
 
-	allPokemon := []mon{}
+	// allPokemon := []mon{}
 
-	for _, f := range records {
-		pokemonFound := mon{}
-		if err := json.Unmarshal([]byte(f), &pokemonFound); err != nil {
-			fmt.Println("Error", err)
-		}
-		allPokemon = append(allPokemon, pokemonFound)
-	}
-	fmt.Println((allPokemon))
-
+	// for _, f := range records {
+	// 	pokemonFound := mon{}
+	// 	if err := json.Unmarshal([]byte(f), &pokemonFound); err != nil {
+	// 		fmt.Println("Error", err)
+	// 	}
+	// 	allPokemon = append(allPokemon, pokemonFound)
+	// }
+	// fmt.Println((allPokemon))
 }
