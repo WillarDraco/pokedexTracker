@@ -1,0 +1,26 @@
+{
+  "name": "pokedextracker",
+  "version": "1.0.0",
+  "description": "Pokedex Tracker",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WillarDraco/pokedexTracker.git"
+  },
+  "keywords": [
+    "pokemon"
+  ],
+  "author": "Willard",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "bugs": {
+    "url": "https://github.com/WillarDraco/pokedexTracker/issues"
+  },
+  "homepage": "https://github.com/WillarDraco/pokedexTracker#readme",
+  "devDependencies": {
+    "electron": "^34.3.0"
+  }
+}
